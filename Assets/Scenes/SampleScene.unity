@@ -16443,6 +16443,7 @@ MonoBehaviour:
   loader: {fileID: 1010367964}
   screenManager: {fileID: 1521796114}
   yandex: {fileID: 1506345205}
+  qrGeneratorOnline: {fileID: 1010367966}
 --- !u!4 &1854387779
 Transform:
   m_ObjectHideFlags: 0
