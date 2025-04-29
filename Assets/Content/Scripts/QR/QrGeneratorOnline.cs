@@ -51,13 +51,14 @@ public class QrGeneratorOnline : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("CHECK CONFIG YA_DISK " + e.Message);
+            Debug.Log("CHECK CONFIG QR_ONLINE" + e.Message);
         }
 
     }
 
     public void UploadPhotoLink(string photoUrl, System.Action<ApiResponse> callback = null)
     {
+        Debug.Log(API_URL+ AUTH_TOKEN);
         StartCoroutine(UploadPhotoLinkCoroutine(photoUrl, callback));
     }
 

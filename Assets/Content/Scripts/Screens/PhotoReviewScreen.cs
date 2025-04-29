@@ -28,6 +28,8 @@ public class PhotoReviewScreen : ScreenBase
         _canSelect = false;
         _downloadButton.onClick.AddListener(OnDownloadPressed);
         _backButton.onClick.AddListener(OnBackPressed);
+        _loader.OnNewPhotoLoaded -= LoadCapturedPhotos;
+        _loader.OnAllPhotosLoaded -= HandleAllPhotosLoaded;
         _loader.OnNewPhotoLoaded += LoadCapturedPhotos;
         _loader.OnAllPhotosLoaded += HandleAllPhotosLoaded;
     }
