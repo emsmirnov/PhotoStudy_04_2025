@@ -19,6 +19,7 @@ public class QrCodeCoverScreen : ScreenBase
     private List<Texture2D> _selectedPhotos = new List<Texture2D>();
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private float _fadeDuration = 0.8f;
+    private bool _photosDownloaded;
 
     public void SetSelectedPhotos(List<Texture2D> selectedPhotos)
     {
@@ -50,9 +51,12 @@ public class QrCodeCoverScreen : ScreenBase
         _posterImagePreloaderCG.DOFade(0, 1);
         await Task.Yield();
         _posterImage.GetComponent<CanvasGroup>().DOFade(1, 1);
+
+        _photosDownloaded = true; ;
     }
     private async void PreparePhotos()
     {
+        _photosDownloaded = false;
         _qrCodeImage.sprite = null;
         _posterImage.GetComponent<CanvasGroup>().DOFade(0, 0);
         _qrCodeImagePreloaderCG.DOFade(1, 0);
@@ -67,6 +71,10 @@ public class QrCodeCoverScreen : ScreenBase
 
     private void OnMainScreenPressed()
     {
+        if (!_photosDownloaded)
+        {
+            return;
+        }
         _loader.CleanFolder();
         ScreenManager.Instance.StartScreens();
         _loader.StartMonitoring();
