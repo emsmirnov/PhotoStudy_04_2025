@@ -10,6 +10,8 @@ public class ShootingModeSelectionScreen : ScreenBase
     [SerializeField] private float _fadeDuration = 0.8f;
     [SerializeField] private Animator _transitionAnimator;
 
+    [SerializeField] private Button _backButton;
+
     public enum ShootingMode
     {
         SingleParticipant,
@@ -18,6 +20,9 @@ public class ShootingModeSelectionScreen : ScreenBase
 
     public override void Initialize()
     {
+        
+        _backButton.onClick.RemoveAllListeners();
+        _backButton.onClick.AddListener(OnBackPressed);
         _singleParticipantBtn.onClick.AddListener(() => OnModeSelected(ShootingMode.SingleParticipant));
         _twoParticipantsBtn.onClick.AddListener(() => OnModeSelected(ShootingMode.TwoParticipants));
     }
@@ -50,5 +55,11 @@ public class ShootingModeSelectionScreen : ScreenBase
     {
         GlobalChosesDataContainer.Instance.ShootingMode = mode;
         ScreenManager.Instance.ShowScreen<LightingModeSelectionScreen>();
+    }
+
+    private void OnBackPressed()
+    {
+        //ScreenManager.Instance.ShowPreviousScreen();
+        ScreenManager.Instance.ShowScreen<ScreensaverScreen>();
     }
 }

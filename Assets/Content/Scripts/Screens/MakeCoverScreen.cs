@@ -14,6 +14,8 @@ public class MakeCoverScreen : ScreenBase
     [SerializeField] private Image _posterImage;
     [SerializeField] private Texture2D[] _posterTextures;
     [SerializeField] private Font[] _posterFonts;
+    [SerializeField] private int[] _fontSizes;
+    [SerializeField] private float[] _fontLineSpacing;
     [SerializeField] private Text _titleText;
     [SerializeField] private GameObject _photoPrefab;
     [SerializeField] private Sprite _frameSprite;
@@ -51,9 +53,11 @@ public class MakeCoverScreen : ScreenBase
             _capturedPhotos.Add(GlobalChosesDataContainer.Instance.SelectedPhotos[i]);
         }
         DisplayPhotos();
-        _titleText.text = GlobalChosesDataContainer.Instance.Name + " " + GlobalChosesDataContainer.Instance.Surname;
+        _titleText.text = GlobalChosesDataContainer.Instance.Name + "\n" + (GlobalChosesDataContainer.Instance.Surname.Contains('-') ? GlobalChosesDataContainer.Instance.Surname.Replace("-", "-\n") : GlobalChosesDataContainer.Instance.Surname);
         _posterImage.transform.Find("Overlay").GetComponent<Image>().sprite = TextureConverter.ConvertTextureToSprite(_posterTextures[GlobalChosesDataContainer.Instance.SelectedCategory]);
         _posterImage.transform.Find("Text").GetComponent<Text>().font = _posterFonts[GlobalChosesDataContainer.Instance.SelectedCategory];
+        _posterImage.transform.Find("Text").GetComponent<Text>().fontSize = _fontSizes[GlobalChosesDataContainer.Instance.SelectedCategory];
+        _posterImage.transform.Find("Text").GetComponent<Text>().lineSpacing = _fontLineSpacing[GlobalChosesDataContainer.Instance.SelectedCategory];
         yield return new WaitForEndOfFrame();
 
         TogglePhotoSelection(0);
