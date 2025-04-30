@@ -25,7 +25,6 @@ public class PhotoReviewScreen : ScreenBase
     public override void Initialize()
     {
         CleanPhotosContainer();
-        _canSelect = false;
         _downloadButton.onClick.AddListener(OnDownloadPressed);
         _backButton.onClick.AddListener(OnBackPressed);
         _loader.OnNewPhotoLoaded -= LoadCapturedPhotos;
@@ -36,6 +35,7 @@ public class PhotoReviewScreen : ScreenBase
 
     public override IEnumerator AnimateShow()
     {
+        _canSelect = false;
         yield return AnimateFadeIn(_canvasGroup, _fadeDuration);
     }
     public override IEnumerator AnimateHide()
@@ -48,6 +48,10 @@ public class PhotoReviewScreen : ScreenBase
         Debug.Log(_capturedPhotos.Count);
         GlobalChosesDataContainer.Instance.Photos = _capturedPhotos.ToList();
         DisplayOnePhoto(tex, _capturedPhotos.Count - 1);
+        if (_capturedPhotos.Count > 0)
+        {
+            _canSelect = true;
+        }
     }
 
     private void DisplayOnePhoto(Texture2D tex, int index)
