@@ -13,6 +13,7 @@ public class QrCodeCoverScreen : ScreenBase
     [SerializeField] private Transform _photosContainer;
     [SerializeField] private Image _posterImage;
     [SerializeField] private Button _toMainScreenButton;
+    [SerializeField] private Button _checkDisksButton;
     [SerializeField] private Loader _loader;
     [SerializeField] private CanvasGroup _qrCodeImagePreloaderCG, _posterImagePreloaderCG;
     [SerializeField] private Image _qrCodeImage;
@@ -20,6 +21,9 @@ public class QrCodeCoverScreen : ScreenBase
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private float _fadeDuration = 0.8f;
     private bool _photosDownloaded;
+    private bool _canUpload;
+    public Image diskAvaliableIcon;
+
 
     public void SetSelectedPhotos(List<Texture2D> selectedPhotos)
     {
@@ -28,14 +32,26 @@ public class QrCodeCoverScreen : ScreenBase
 
     public override void Initialize()
     {
+        _toMainScreenButton.onClick.RemoveAllListeners();
         _toMainScreenButton.onClick.AddListener(OnMainScreenPressed);
+        _checkDisksButton.onClick.RemoveAllListeners();
+        _checkDisksButton.onClick.AddListener(OnCheckDisksPressed);
     }
 
     public override IEnumerator AnimateShow()
     {
         PreparePhotos();
+        _canUpload = true;
         _posterImage.sprite = TextureConverter.ConvertTextureToSprite(GlobalChosesDataContainer.Instance.Poster);
         yield return AnimateFadeIn(_canvasGroup, _fadeDuration);
+        bool diskAvaliable = _loader.CheckAvaliableDisks();
+        diskAvaliableIcon.gameObject.SetActive(diskAvaliable);
+        if (diskAvaliable && _canUpload)
+        {
+            _canUpload = false;
+            _loader.TryUploadPhotosToFlashDisk();
+            _canUpload = true;
+        }
     }
     public override IEnumerator AnimateHide()
     {
@@ -66,7 +82,24 @@ public class QrCodeCoverScreen : ScreenBase
         {
             await Task.Delay(500);
         }
-        _loader.UploadSelectedPhotosToDisk(new Texture2D[1] { GlobalChosesDataContainer.Instance.Poster }, true, true);
+        await _loader.UploadSelectedPhotosToDisk(new Texture2D[1] { GlobalChosesDataContainer.Instance.Poster }, true, true);
+        _loader.TryUploadPhotosToFlashDisk();
+    }
+
+    private void OnCheckDisksPressed()
+    {
+        if (!_photosDownloaded)
+        {
+            return;
+        }
+        bool diskAvaliable = _loader.CheckAvaliableDisks();
+        diskAvaliableIcon.gameObject.SetActive(diskAvaliable);
+        if (diskAvaliable && _canUpload)
+        {
+            _canUpload = false;
+            _loader.TryUploadPhotosToFlashDisk();
+            _canUpload = true;
+        }
     }
 
     private void OnMainScreenPressed()

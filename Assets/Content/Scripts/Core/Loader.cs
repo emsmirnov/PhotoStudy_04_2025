@@ -15,12 +15,14 @@ using UnityEngine.Video;
 
 public class Loader : MonoBehaviour
 {
+    public bool IsPortrait;
     [SerializeField] private string FilesPath;
     [SerializeField] private string OutFilesPath;
     public static Action<DateTime> filesLoaded;
     // [SerializeField] private PhotosContainer container;
     [SerializeField] private GlobalChosesDataContainer container;
     [SerializeField] private YandexDiskSDK yandex;
+    [SerializeField] private RemovableMediaManager flashDiskUploadManager;
     public delegate void VoidDelegate(bool canCount);
     public static VoidDelegate CanCount;
     public VideoPlayer vp;
@@ -146,6 +148,11 @@ public class Loader : MonoBehaviour
         {
             byte[] fileData = await File.ReadAllBytesAsync(filePath);
             Texture2D texture = new Texture2D(2, 2);
+            if (IsPortrait)
+            {
+                texture.LoadImage(fileData);
+                return RotateTexture(texture, 90);
+            }
             texture.LoadImage(fileData);
             return texture;
         }
@@ -155,6 +162,73 @@ public class Loader : MonoBehaviour
             return null;
         }
     }
+
+    /// <summary>
+    /// Rotation
+    /// </summary>/
+    /// 
+    /// 
+
+    private Texture2D RotateTexture(Texture2D originalTexture, int angle)
+    {
+        angle = angle % 360;
+        if (angle == 0) return originalTexture;
+
+        Color32[] original = originalTexture.GetPixels32();
+        Color32[] rotated = new Color32[original.Length];
+        int w = originalTexture.width;
+        int h = originalTexture.height;
+
+        int x, y;
+        int i = 0;
+
+        switch (angle)
+        {
+            case 90:
+                for (x = 0; x < w; x++)
+                {
+                    for (y = h - 1; y >= 0; y--)
+                    {
+                        rotated[i] = original[x + y * w];
+                        i++;
+                    }
+                }
+                return CreateTextureFromColors(h, w, rotated);
+            case 180:
+                for (y = h - 1; y >= 0; y--)
+                {
+                    for (x = w - 1; x >= 0; x--)
+                    {
+                        rotated[i] = original[x + y * w];
+                        i++;
+                    }
+                }
+                return CreateTextureFromColors(w, h, rotated);
+            case 270:
+                for (x = w - 1; x >= 0; x--)
+                {
+                    for (y = 0; y < h; y++)
+                    {
+                        rotated[i] = original[x + y * w];
+                        i++;
+                    }
+                }
+                return CreateTextureFromColors(h, w, rotated);
+            default:
+                return originalTexture;
+        }
+    }
+
+    private Texture2D CreateTextureFromColors(int width, int height, Color32[] pixels)
+    {
+        Texture2D newTex = new Texture2D(width, height);
+        newTex.SetPixels32(pixels);
+        newTex.Apply();
+        return newTex;
+    }
+
+    /////////////
+    /// END ROTATION
 
     public void CleanProcessedFiles()
     {
@@ -183,7 +257,7 @@ public class Loader : MonoBehaviour
         else
         {
             fileCreated = false;
-            names = new string[1] { $"MagazinePoster.{photoFormat}" };
+            names = new string[1] { $"Poster.{photoFormat}" };
             await SaveScreenshotToFile(textures[0], names[0]);
         }
         while (!fileCreated)
@@ -513,6 +587,16 @@ public class Loader : MonoBehaviour
 
         RenderTexture.ReleaseTemporary(rt);
         return scaledTex;
+    }
+
+    public void TryUploadPhotosToFlashDisk()
+    {
+        flashDiskUploadManager.CopyFolderToRemovableDrive($"{OutFilesPath}/{folderName}");
+    }
+
+    public bool CheckAvaliableDisks()
+    {
+        return !string.IsNullOrEmpty(flashDiskUploadManager.GetRemovableDrivePath());
     }
 
 
