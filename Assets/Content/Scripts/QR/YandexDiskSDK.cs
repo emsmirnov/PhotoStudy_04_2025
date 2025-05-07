@@ -94,11 +94,13 @@ namespace Project
             GlobalChosesDataContainer.Instance.YDFolderCreated = true;
             for (int i = 0; i < nameFiles.Length; i++)
             {
+
                 this.sourcePath = $"{sourcePath}/{nameFiles[i]}";
                 // var folderName = DateTime.Now.ToSafeString().Replace(" ", "_").Replace(":", "-").Replace(".", "-");
                 pathDisk = GetPathDisk(pathDiskName, folderName, nameFiles[i]);
                 // Debug.Log("---> путь к файлу на диске, sourcePath: " + sourcePath + "      nameFile: " + nameFile);
                 // Debug.Log("путь к файлу на диске, filePath: " + pathDisk);
+                fileUploaded = false;
                 await UploadingFileToDisk(pathDisk, folderName);
                 while (!fileUploaded)
                 {
@@ -177,8 +179,8 @@ namespace Project
                 responseBody = responseBody.Substring(0, indexOfSubstring2);
 
                 await HTTP_PUT(responseBody, sourcePath);
-
-                await PublishingFile(path);
+                await Task.Delay(100);
+                // await PublishingFile(path);
                 fileUploaded = true;
 
             }
@@ -201,11 +203,13 @@ namespace Project
                 Debug.Log(request);
                 HttpResponseMessage response = await client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
+                await Task.Yield();
                 await response.Content.ReadAsStringAsync();
+                await Task.Delay(200);
             }
             catch (Exception e)
             {
-                Debug.Log("PublishingFile exc " + e);
+                Debug.Log("PublishingFile exc " + e.Message);
                 ScreenManager.Instance.EnableError();
             }
         }
@@ -247,7 +251,7 @@ namespace Project
 
                 using (WebClient client = new WebClient())
                 {
-                    await client.UploadFileTaskAsync(new Uri(Url), filePath);
+                    var resp = await client.UploadFileTaskAsync(new Uri(Url), filePath);
                 }
             }
             catch (Exception e)

@@ -35,7 +35,6 @@ public class PhotoReviewScreen : ScreenBase
 
     public override IEnumerator AnimateShow()
     {
-        _canSelect = false;
         yield return AnimateFadeIn(_canvasGroup, _fadeDuration);
     }
     public override IEnumerator AnimateHide()
@@ -118,7 +117,8 @@ public class PhotoReviewScreen : ScreenBase
         var selectedPhotos = _capturedPhotos.Where(photo => _selectedPhotoIndices.Contains(_capturedPhotos.IndexOf(photo)));
         GlobalChosesDataContainer.Instance.SelectedPhotos = selectedPhotos.ToList();
         ScreenManager.Instance.GetScreen<QrCodeScreen>().SetSelectedPhotos(selectedPhotos.ToList());
-        // await _loader.UploadSelectedPhotosToDisk(selectedPhotos.ToArray(), true);                                                    /////////////////// ПЕРЕДЕЛАТЬ ПРОВЕРКУ СОЕДИНЕНИЯ ИЛИ НЕ ПЕРЕДАВАТЬ ИЗ ЭТОГО СКРИПТА
+        _canSelect = true;
+        // await _loader.UploadSelectedPhotosToDisk(selectedPhotos.ToArray(), true);                                                
         ScreenManager.Instance.ShowScreen<QrCodeScreen>();
     }
 

@@ -64,17 +64,14 @@ public class QrGeneratorOnline : MonoBehaviour
 
     private IEnumerator UploadPhotoLinkCoroutine(string photoUrl, System.Action<ApiResponse> callback)
     {
-        // Создаем форму для multipart/form-data
         WWWForm form = new WWWForm();
         form.AddField("link", photoUrl);
 
         using (UnityWebRequest request = UnityWebRequest.Post(API_URL, form))
         {
-            // Устанавливаем заголовки
             request.SetRequestHeader("accept", "application/json");
             request.SetRequestHeader("X-Upload-Token", AUTH_TOKEN);
 
-            // Для POST с формой Content-Type устанавливается автоматически
 
             yield return request.SendWebRequest();
 
@@ -95,7 +92,6 @@ public class QrGeneratorOnline : MonoBehaviour
                 yield break;
             }
 
-            // Загружаем QR-код если есть ссылка
             if (!string.IsNullOrEmpty(response.data.link.qr))
             {
 

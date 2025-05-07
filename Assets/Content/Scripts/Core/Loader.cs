@@ -121,10 +121,10 @@ public class Loader : MonoBehaviour
             {
                 if (!_processedFiles.Contains(file.Name))
                 {
+                    _processedFiles.Add(file.Name);
                     var texture = await LoadTexture(file.FullName);
                     if (texture != null)
                     {
-                        _processedFiles.Add(file.Name);
                         OnNewPhotoLoaded?.Invoke(texture);
 
                         if (_processedFiles.Count >= _expectedPhotoCount)
@@ -132,6 +132,10 @@ public class Loader : MonoBehaviour
                             StopMonitoring();
                             break;
                         }
+                    }
+                    else
+                    {
+                        _processedFiles.Remove(file.Name);
                     }
                 }
             }
