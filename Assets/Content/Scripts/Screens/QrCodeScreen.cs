@@ -78,10 +78,10 @@ public class QrCodeScreen : ScreenBase
 
     private void OnMakePosterPressed()
     {
-        if (!_photosDownloaded)
-        {
-            return;
-        }
+        //if (!_photosDownloaded)
+        //{
+        //    return;
+        //}
         ScreenManager.Instance.ShowScreen<DataInputScreen>();
     }
 

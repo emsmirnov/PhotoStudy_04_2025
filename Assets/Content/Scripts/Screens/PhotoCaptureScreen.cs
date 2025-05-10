@@ -118,6 +118,8 @@ public class PhotoCaptureScreen : ScreenBase
 
     private async void pushCommandToShot()
     {
+        _shotingStarted = true;
+        return;
         using (UnityWebRequest uwr = UnityWebRequest.Get(cameraAppAddress + $"/camera?action=multishot&count={cameraAppShotCount}"))
         {
             uwr.SendWebRequest();
