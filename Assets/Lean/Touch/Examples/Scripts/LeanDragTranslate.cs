@@ -7,6 +7,7 @@ namespace Lean.Touch
 	[AddComponentMenu(LeanTouch.ComponentPathPrefix + "Drag Translate")]
 	public class LeanDragTranslate : MonoBehaviour
 	{
+		public float sensitivity = 1;
 		/// <summary>The method used to find fingers to use with this component. See LeanFingerFilter documentation for more information.</summary>
 		public LeanFingerFilter Use = new LeanFingerFilter(true);
 
@@ -111,7 +112,7 @@ namespace Lean.Touch
 			var screenPoint = RectTransformUtility.WorldToScreenPoint(camera, transform.position);
 
 			// Add the deltaPosition
-			screenPoint += screenDelta;
+			screenPoint += screenDelta * sensitivity;
 
 			// Convert back to world space
 			var worldPoint = default(Vector3);
@@ -133,7 +134,7 @@ namespace Lean.Touch
 				var screenPoint = camera.WorldToScreenPoint(transform.position);
 
 				// Add the deltaPosition
-				screenPoint += (Vector3)screenDelta;
+				screenPoint += (Vector3)screenDelta * sensitivity;
 
 				// Convert back to world space
 				transform.position = camera.ScreenToWorldPoint(screenPoint);
