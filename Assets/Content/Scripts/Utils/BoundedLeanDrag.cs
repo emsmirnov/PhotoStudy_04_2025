@@ -6,9 +6,6 @@ public class BoundedLeanDrag : LeanDragTranslate
 {
     private RectTransform parentRect;
     private RectTransform selfRect;
-
-    public float sensitivity = 1.1f;
-
     protected override void Awake()
     {
         base.Awake();
@@ -57,7 +54,7 @@ public class BoundedLeanDrag : LeanDragTranslate
             parentBounds.min.y - selfBounds.min.y,
             parentBounds.max.y - selfBounds.max.y
         );
-        transform.localPosition = localPos * sensitivity;
+        transform.localPosition = localPos;
         print("locat transform::" + transform.localPosition);
     }
 
