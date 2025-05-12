@@ -40,6 +40,7 @@ public class DataInputScreen : ScreenBase
         _nextButton.onClick.AddListener(OnNextPressed);
         SetupKeyboard();
         ResetFields();
+        ActivateNameField();
     }
 
     private void SetupKeyboard()
@@ -172,11 +173,11 @@ public class DataInputScreen : ScreenBase
             _namePlaceholder.color = Color.red;
             emptyFields = true;
         }
-        if (string.IsNullOrWhiteSpace(_currentSurname))
-        {
-            _surnamePlaceholder.color = Color.red;
-            emptyFields = true;
-        }
+        //if (string.IsNullOrWhiteSpace(_currentSurname))
+        //{
+        //    _surnamePlaceholder.color = Color.red;
+        //    emptyFields = true;
+        //}
         if (emptyFields)
         {
             UpdatePlaceholderVisibility();
