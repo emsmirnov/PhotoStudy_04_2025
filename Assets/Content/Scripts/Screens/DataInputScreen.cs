@@ -42,6 +42,11 @@ public class DataInputScreen : ScreenBase
         ResetFields();
     }
 
+    private void Start()
+    {
+        ActivateNameField();
+    }
+
     private void SetupKeyboard()
     {
         _keyboard.OnKeyPressed += HandleKeyPress;
@@ -172,11 +177,11 @@ public class DataInputScreen : ScreenBase
             _namePlaceholder.color = Color.red;
             emptyFields = true;
         }
-        if (string.IsNullOrWhiteSpace(_currentSurname))
-        {
-            _surnamePlaceholder.color = Color.red;
-            emptyFields = true;
-        }
+        //if (string.IsNullOrWhiteSpace(_currentSurname))
+        //{
+        //    _surnamePlaceholder.color = Color.red;
+        //    emptyFields = true;
+        //}
         if (emptyFields)
         {
             UpdatePlaceholderVisibility();

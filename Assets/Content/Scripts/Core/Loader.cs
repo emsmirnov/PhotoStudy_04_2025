@@ -37,6 +37,9 @@ public class Loader : MonoBehaviour
     private string photoFormat = "jpg";
     [SerializeField] private string folderName = "";
     public bool posterCreationFinished;
+
+    public int sensitivity = 20;
+
     public async void Init()
     {
         DirectoryInfo d = new DirectoryInfo(Application.streamingAssetsPath);
@@ -61,11 +64,23 @@ public class Loader : MonoBehaviour
         var splitPathes = pathes.Split(new char[] { '|' });
         FilesPath = splitPathes[0];
         OutFilesPath = splitPathes[1];
+
+        try
+        {
+            sensitivity = int.Parse(splitPathes[2]);
+        }
+        catch
+        {
+            sensitivity = 20;
+        }
+        
+        //Debug.Log(FilesPath + " | " + OutFilesPath);
         timer = 0;
         canCount = true;
         fileCreated = false;
         downloadedFiles = new List<string>();
         posterCreationFinished = false;
+
         StartMonitoring();
     }
 

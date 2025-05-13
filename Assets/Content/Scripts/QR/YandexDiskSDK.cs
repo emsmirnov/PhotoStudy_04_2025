@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 namespace Project
@@ -98,10 +99,22 @@ namespace Project
                 this.sourcePath = $"{sourcePath}/{nameFiles[i]}";
                 // var folderName = DateTime.Now.ToSafeString().Replace(" ", "_").Replace(":", "-").Replace(".", "-");
                 pathDisk = GetPathDisk(pathDiskName, folderName, nameFiles[i]);
-                // Debug.Log("---> путь к файлу на диске, sourcePath: " + sourcePath + "      nameFile: " + nameFile);
-                // Debug.Log("путь к файлу на диске, filePath: " + pathDisk);
+                Debug.Log("---> путь к файлу на диске sourcePath: " + sourcePath + "\nnameFile: " + nameFiles[i]);
+                Debug.Log("путь к файлу на диске, filePath: " + pathDisk);
                 fileUploaded = false;
-                await UploadingFileToDisk(pathDisk, folderName);
+                //await UploadingFileToDisk(pathDisk, folderName);
+                Debug.Log($"folderName:: {folderName}");
+                string newYandexDir = $"C:/Pattern/YDFiles/{folderName}";
+                //FileUtil.CopyFileOrDirectory($"{sourcePath}/{nameFiles[i]}", $"D:/Pattern/YD/{nameFiles[i]}");
+                if (!Directory.Exists(newYandexDir))
+                {
+                    Directory.CreateDirectory(newYandexDir);
+                    //print(di);
+                }
+                
+                File.Copy($"{sourcePath}/{nameFiles[i]}", $"{newYandexDir}/{nameFiles[i]}", true);
+                //File.Copy(sourcePath, "D:/Pattern/YD/", true);
+                fileUploaded = true;
                 while (!fileUploaded)
                 {
                     await Task.Yield();
@@ -116,7 +129,18 @@ namespace Project
             callbackResultURL?.Invoke(urlToDownloadedFile);
         }
 
-        private async Task CreateFolder(string folderName)
+        private async Task CopyFileAsync(string sourcePath, string destinationPath)
+        {
+            using (Stream source = File.Open(sourcePath, FileMode.Open))
+            {
+                using (Stream destination = File.Create(destinationPath))
+                {
+                    await source.CopyToAsync(destination);
+                }
+            }
+        }
+
+        private async Task CreateFolder(string folderName) // Создаёт и публикует папку на яд
         {
             try
             {
@@ -128,7 +152,7 @@ namespace Project
                 responseFolder.EnsureSuccessStatusCode();
 
                 await PublishFolder(folderName);
-                folderCreated = true; ;
+                folderCreated = true;
             }
             catch (Exception e)
             {

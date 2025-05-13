@@ -26,7 +26,7 @@
 
 # Visual Studio cache directory
 .vs/
-
+_build/
 # Gradle cache directory
 .gradle/
 
@@ -73,7 +73,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-#Video
-*.mp4
-*.mov
-*.webm
+# #Video
+# *.mp4
+# *.mov
+# *.webm

@@ -42,6 +42,8 @@ namespace TMPro.Examples
         private Vector3 moveVector;
         private float mouseWheel;
 
+        [SerializeField] private float moveSpeed = 100000f;
+
         // Controls for Touches on Mobile devices
         //private float prev_ZoomDelta;
 
@@ -218,9 +220,9 @@ namespace TMPro.Examples
                     }
                 }
 
-
                 if (Input.GetMouseButton(2))
                 {
+                    
                     if (dummyTarget == null)
                     {
                         // We need a Dummy Target to anchor the Camera
@@ -242,8 +244,8 @@ namespace TMPro.Examples
                     }
 
 
-                    mouseY = Input.GetAxis("Mouse Y");
-                    mouseX = Input.GetAxis("Mouse X");
+                    mouseY = Input.GetAxis("Mouse Y") * moveSpeed;
+                    mouseX = Input.GetAxis("Mouse X") * moveSpeed;
 
                     moveVector = cameraTransform.TransformDirection(mouseX, mouseY, 0);
 
