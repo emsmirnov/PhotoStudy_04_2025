@@ -14330,7 +14330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _screensContainer: {fileID: 286508010}
-  _initialScreen: {fileID: 752757394}
+  _initialScreen: {fileID: 2076184611}
   _screenTransitionDuration: 0.5
   _activityTimer: 60
   _currentTimer: 0
@@ -17347,6 +17347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentFolderName: 
   YDFolderCreated: 0
+  isDoubleBuild: 1
 --- !u!4 &1864087017
 Transform:
   m_ObjectHideFlags: 0

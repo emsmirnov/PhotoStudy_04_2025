@@ -12,7 +12,7 @@ public class ScreenManager : MonoBehaviour
     public static ScreenManager Instance { get; private set; }
 
     [SerializeField] private Transform _screensContainer;
-    [SerializeField] private ScreensaverScreen _initialScreen;
+    [SerializeField] private ScreenBase _initialScreen;
     [SerializeField] private float _screenTransitionDuration = 0.5f;
     [SerializeField] private float _activityTimer = 60f;
     [SerializeField] private float _currentTimer = 0f;
@@ -45,7 +45,15 @@ public class ScreenManager : MonoBehaviour
     {
         if (_initialScreen != null)
         {
-            ShowScreen<ScreensaverScreen>();
+            if (_initialScreen.GetType() == typeof(ScreensaverScreen))
+            {
+                ShowScreen<ScreensaverScreen>();
+            }
+            else
+            {
+                ShowScreen<DataInputScreen>();
+            }
+
         }
     }
 
@@ -101,7 +109,7 @@ public class ScreenManager : MonoBehaviour
     public void ShowScreen<T>(Action onComplete = null) where T : ScreenBase
     {
         if (_isTransitioning) return;
-        if (typeof(T) == typeof(ScreensaverScreen))
+        if (typeof(T) == _initialScreen.GetType())
         {
             _canCount = false;
             _currentTimer = 0;

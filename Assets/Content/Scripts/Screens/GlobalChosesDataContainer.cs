@@ -16,6 +16,7 @@ public class GlobalChosesDataContainer : MonoBehaviour
     public string Name { get; set; } = "";
     public string Surname { get; set; } = "";
     public bool YDFolderCreated = false;
+    public bool isDoubleBuild;
 
     public int SelectedCategory { get; set; }
     public void Init()

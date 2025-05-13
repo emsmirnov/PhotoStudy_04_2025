@@ -73,7 +73,7 @@ public class Loader : MonoBehaviour
         {
             sensitivity = 20;
         }
-        
+
         //Debug.Log(FilesPath + " | " + OutFilesPath);
         timer = 0;
         canCount = true;
@@ -125,6 +125,10 @@ public class Loader : MonoBehaviour
         return OutFilesPath;
     }
 
+    public void GetExistingPhotos()
+    {
+        CheckForNewPhotos();
+    }
     private async Task CheckForNewPhotos()
     {
         try
@@ -161,18 +165,39 @@ public class Loader : MonoBehaviour
         }
     }
 
+    public async Task<List<Texture2D>> CheckForExistingPhotos()
+    {
+        var directory = new DirectoryInfo(FilesPath);
+        var files = directory.GetFiles($"*.{photoFormat}");
+        var texs = new List<Texture2D>();
+        foreach (var file in files)
+        {
+            _processedFiles.Add(file.Name);
+            var texture = await LoadTexture(file.FullName);
+            await  Task.Yield();
+            if (texture != null)
+            {
+                texs.Add(texture);
+            }
+        }
+        return texs;
+    }
+
     private async Task<Texture2D> LoadTexture(string filePath)
     {
         try
         {
             byte[] fileData = await File.ReadAllBytesAsync(filePath);
+            await  Task.Yield();
             Texture2D texture = new Texture2D(2, 2);
             if (IsPortrait)
             {
                 texture.LoadImage(fileData);
+                await  Task.Yield();
                 return RotateTexture(texture, 90);
             }
             texture.LoadImage(fileData);
+            await  Task.Yield();
             return texture;
         }
         catch (Exception e)

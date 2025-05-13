@@ -82,7 +82,10 @@ public class QrCodeScreen : ScreenBase
         //{
         //    return;
         //}
-        ScreenManager.Instance.ShowScreen<DataInputScreen>();
+        if (GlobalChosesDataContainer.Instance.isDoubleBuild == false)
+        {
+            ScreenManager.Instance.ShowScreen<DataInputScreen>();
+        }
     }
 
     private void OnMainScreenPressed()

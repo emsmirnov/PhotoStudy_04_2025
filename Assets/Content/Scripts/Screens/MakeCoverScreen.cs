@@ -23,6 +23,7 @@ public class MakeCoverScreen : ScreenBase
     [SerializeField] private Button _backButton;
     [SerializeField] private Loader _loader;
     private bool _canSelect;
+    private bool _photosLoaded;
 
     [SerializeField] private string _cloudFolderTemplate = "https://cloud.example.com/user1234/";
 
@@ -45,14 +46,33 @@ public class MakeCoverScreen : ScreenBase
     public override IEnumerator AnimateShow()
     {
         _posterImage.gameObject.GetComponent<CanvasGroup>().alpha = 0;
-        yield return AnimateFadeIn(_canvasGroup, _fadeDuration);
         _capturedPhotos = new List<Texture2D>();
         _selectedPhotoIndices = new List<int>();
-        for (int i = 0; i < GlobalChosesDataContainer.Instance.SelectedPhotos.Count; i++)
+        yield return AnimateFadeIn(_canvasGroup, _fadeDuration);
+        if (GlobalChosesDataContainer.Instance.isDoubleBuild)
         {
-            _capturedPhotos.Add(GlobalChosesDataContainer.Instance.SelectedPhotos[i]);
+            _loader.StopMonitoring();
+            foreach (Transform child in _photosContainer)
+            {
+                Destroy(child.gameObject);
+            }
+            yield return new WaitUntil(() => _photosContainer.childCount < 1);
+            _loader.OnNewPhotoLoaded -= LoadCapturedPhotos;
+            _loader.OnNewPhotoLoaded += LoadCapturedPhotos;
+            _loader.StartMonitoring();
+            // _photosLoaded = false;
+            // LoadCapturedPhotos();
+            yield return new WaitUntil(() => _photosContainer.childCount > 0);
+            // DisplayPhotos();
         }
-        DisplayPhotos();
+        if (!GlobalChosesDataContainer.Instance.isDoubleBuild)
+        {
+            for (int i = 0; i < GlobalChosesDataContainer.Instance.SelectedPhotos.Count; i++)
+            {
+                _capturedPhotos.Add(GlobalChosesDataContainer.Instance.SelectedPhotos[i]);
+            }
+            DisplayPhotos();
+        }
         _titleText.text = GlobalChosesDataContainer.Instance.Name + "\n" + (GlobalChosesDataContainer.Instance.Surname.Contains('-') ? GlobalChosesDataContainer.Instance.Surname.Replace("-", "-\n") : GlobalChosesDataContainer.Instance.Surname);
         _posterImage.transform.Find("Overlay").GetComponent<Image>().sprite = TextureConverter.ConvertTextureToSprite(_posterTextures[GlobalChosesDataContainer.Instance.SelectedCategory]);
         _posterImage.transform.Find("Text").GetComponent<Text>().font = _posterFonts[GlobalChosesDataContainer.Instance.SelectedCategory];
@@ -69,6 +89,35 @@ public class MakeCoverScreen : ScreenBase
         yield return AnimateFadeOut(_canvasGroup, _fadeDuration);
     }
 
+    private void LoadCapturedPhotos(Texture2D tex)
+    {
+        _capturedPhotos.Add(tex);
+        Debug.Log(_capturedPhotos.Count);
+        GlobalChosesDataContainer.Instance.Photos = _capturedPhotos.ToList();
+        DisplayOnePhoto(tex, _capturedPhotos.Count - 1);
+        if (_capturedPhotos.Count > 0)
+        {
+            _canSelect = true;
+        }
+    }
+
+    private void DisplayOnePhoto(Texture2D tex, int index)
+    {
+        var photoObj = Instantiate(_photoPrefab, _photosContainer);
+        var image = photoObj.transform.Find("Photo").GetComponent<Image>();
+        var button = photoObj.GetComponent<Button>();
+
+        image.gameObject.GetComponent<SmartImageFitter>().SetImage(TextureConverter.ConvertTextureToSprite(tex));
+
+        button.onClick.AddListener(() => TogglePhotoSelection(index));
+
+        UpdatePhotoSelectionVisual(photoObj, index);
+    }
+    private async void LoadCapturedPhotos()
+    {
+        _capturedPhotos = await _loader.CheckForExistingPhotos();
+        _photosLoaded = true;
+    }
     private void DisplayPhotos()
     {
         foreach (Transform child in _photosContainer)
