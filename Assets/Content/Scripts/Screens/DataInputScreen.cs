@@ -40,6 +40,10 @@ public class DataInputScreen : ScreenBase
         _nextButton.onClick.AddListener(OnNextPressed);
         SetupKeyboard();
         ResetFields();
+    }
+
+    private void Start()
+    {
         ActivateNameField();
     }
 
